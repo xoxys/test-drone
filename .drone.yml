@@ -8,7 +8,7 @@ platform:
 
 steps:
 - name: publish-dockerhub
-  image: thegeeklab/drone-docker:19
+  image: plugins/docker:19
   settings:
     auto_tag: true
     #auto_tag_suffix: amd64
