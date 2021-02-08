@@ -1,3 +1,3 @@
-FROM archlinux
+FROM alpine
 
-RUN pacman -Syu --noconfirm
+RUN apk update
