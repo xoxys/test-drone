@@ -11,7 +11,7 @@ steps:
   image: thegeeklab/drone-docker:19
   settings:
     auto_tag: true
-    auto_tag_suffix: amd64
+    #auto_tag_suffix: amd64
     dockerfile: Dockerfile
     password:
       from_secret: docker_password
