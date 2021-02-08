@@ -1,0 +1,130 @@
+---
+kind: pipeline
+name: build-container-amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: publish-dockerhub
+  image: thegeeklab/drone-docker:19
+  settings:
+    auto_tag: true
+    auto_tag_suffix: amd64
+    dockerfile: Dockerfile
+    password:
+      from_secret: docker_password
+    repo: xoxys/${DRONE_REPO_NAME}
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+name: build-container-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: publish-dockerhub
+  image: thegeeklab/drone-docker:19
+  settings:
+    auto_tag: true
+    auto_tag_suffix: arm64
+    dockerfile: Dockerfile
+    password:
+      from_secret: docker_password
+    repo: xoxys/${DRONE_REPO_NAME}
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+name: build-container-arm
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: publish-dockerhub
+  image: thegeeklab/drone-docker:19
+  settings:
+    auto_tag: true
+    auto_tag_suffix: arm
+    dockerfile: Dockerfile
+    password:
+      from_secret: docker_password
+    repo: xoxys/${DRONE_REPO_NAME}
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+name: notifications
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: manifest-dockerhub
+  image: plugins/manifest
+  settings:
+    auto_tag: true
+    ignore_missing: true
+    password:
+      from_secret: docker_password
+    spec: manifest.tmpl
+    username:
+      from_secret: docker_username
+  when:
+    status:
+    - success
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  status:
+  - success
+  - failure
+
+depends_on:
+- build-container-amd64
+- build-container-arm
+- build-container-arm64
+
+...
